@@ -1,8 +1,11 @@
+import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
+import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
+import { OpmConfigComponent } from './../opm-config/opm-config.component';
+import { InstallComponent } from './../install/install.component';
 import { MatCardModule } from '@angular/material/card';
 import { PepListModule } from '@pepperi-addons/ngx-lib/list';
 import { AddonService } from './addon.service';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
-// import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -12,7 +15,6 @@ import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepHttpService, PepFileService, PepNgxLibModule, PepAddonService, PepCustomizationService } from '@pepperi-addons/ngx-lib';
 import { AddonComponent } from './index';
-import {PepperiTableComponent} from './pepperi-table.component'
 import { MatDialogModule } from '@angular/material/dialog';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 
@@ -42,13 +44,16 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
 @NgModule({
     declarations: [
         AddonComponent,
-        PepperiTableComponent
+        InstallComponent,
+        OpmConfigComponent
     ],
     imports: [
         CommonModule,
         HttpClientModule,
         MatDialogModule,
         MatCardModule,
+        PepTextboxModule,
+        PepCheckboxModule,
         //// When not using module as sub-addon please remark this for not loading twice resources
         TranslateModule.forChild({
             loader: {

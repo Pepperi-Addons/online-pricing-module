@@ -1,0 +1,85 @@
+<mat-card>
+    <pep-top-bar [inline]="true" [title]="('Title_Opm_Detalis' | translate)">
+        <div header-end-content>
+            <pep-button [value]="'Uninstall_Button' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="onUninstall($event);">
+            </pep-button>
+        </div>
+    </pep-top-bar>
+    <br>
+    <p>
+        {{'Opm_Details_Description_section_1' | translate}}
+        <br>
+        {{'Opm_Details_Description_section_2' | translate}}        
+    </p>
+    <div class="fields-containter">
+        <pep-textbox
+            [(value)]="addonService.opmData.URL"
+            [label]="'URL' | translate"
+            type="link"
+            [mandatory]="true"
+            [disabled]="false"
+            textColor=""
+            xAlignment="left"
+            [showTitle]="true"
+            [renderTitle]="true"
+            [renderError]="true"
+            [renderSymbol]="true"
+        ></pep-textbox>
+
+        <pep-textbox
+        [(value)]="addonService.opmData.User"
+        [label]="'User' | translate"
+        type="text"
+        [mandatory]="true"
+        [disabled]="false"
+        textColor=""
+        xAlignment="left"
+        [showTitle]="true"
+        [renderTitle]="true"
+        [renderError]="true"
+        [renderSymbol]="true"
+    ></pep-textbox>
+
+    <pep-textbox
+        [(value)]="addonService.opmData.Password"
+        [label]="'Password' | translate"
+        type="text"
+        [mandatory]="true"
+        [disabled]="false"
+        textColor=""
+        xAlignment="left"
+        [showTitle]="true"
+        [renderTitle]="true"
+        [renderError]="true"
+        [renderSymbol]="true"
+    ></pep-textbox>
+
+    <pep-select
+        [(value)]="addonService.opmData.DestinationField"
+        [label]="'Select_Destination_Field' | translate"
+        type="select"
+        [mandatory]="false"
+        [disabled]="false"
+        xAlignment="left"
+        [options]="addonService.destinationFieldoptions"
+        [showTitle]="false"
+        [emptyOption]="false"
+    ></pep-select>
+
+    <pep-checkbox
+    [(value)]="addonService.opmData.EnableOnReadOnlyAtd"
+        [label]="'Load_On_Read_only' | translate"
+        type="checkbox"
+        [mandatory]="false"
+        [disabled]="false"
+        xAlignment="left"
+        [showTitle]="true"
+        [renderTitle]="true"
+        [visible]="true"
+    ></pep-checkbox>
+
+    <pep-button [value]="'Save_Opm_Details' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="saveOpmData();">
+    </pep-button>
+    </div>
+
+</mat-card>

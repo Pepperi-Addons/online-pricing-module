@@ -1,6 +1,6 @@
 {
-    "AddonUUID": "",
-    "AddonVersion": "0.0.0",
+    "AddonUUID": "9d047fdc-f151-47b5-b19f-54bcdb35ef3d",
+    "AddonVersion": "0.0.3",
     "DebugPort": 4500,
     "WebappBaseUrl": "https://app.sandbox.pepperi.com",
     "DefaultEditor": "main",
@@ -19,12 +19,14 @@
         "ClientStack": "ng10",
         "Editors": [
             {
-                "ParentPackageName": "CHANGE_TO_ADDON_CONTAINER_NAME",
-                "PackageName": "CHANGE_TO_ADDON_PATH",
-                "Description": "CHANGE_TO_ADDON_DESCRIPTION"
+                "ParentPackageName": "Online Pricing Module",
+                "PackageName": "opm",
+                "Description": "Online Pricing Module"
             }
         ],
-        "Dependencies": {},
+        "Dependencies": {
+            "cpi_node": "0.2.0"
+        },
         "CPISide": [
             "addon-cpi.ts"
         ]

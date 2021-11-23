@@ -1,27 +1,14 @@
-<div class="ng-component-container" *ngIf="(dataSource$ | async) as installedAddons">
-
-<mat-card>
-
-        <pep-top-bar [inline]="true" [title]="('Title_Sub_Addon' | translate)">
-            <div header-end-content>
-                <pep-button [value]="'Open_Dialog' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="openDialog();">
-                </pep-button>
-            </div>
-        </pep-top-bar>
-        <div class="table-content">
-            <pep-table [displayedColumns]="displayedColumns" [dataSource]="(dataSource$ | async)"></pep-table>
+<div class="addon-main">
+    
+    <!-- <div #loadingSpinner pepRtlClass [ngStyle]="{ visibility: 'visible' }" id="loadingSpinnerModal">
+        <div id="loadingSpinner">
+            <div class="pep-loading-spinner" *ngFor="let number of [0, 1, 2, 3, 4]" [ngStyle]="{ 'background-color': customizationService?.getLoadingSpinnerColor() }"></div>
         </div>
-        <br>
-        <div>
-            <pep-select #pepSelect [value]="'Option 1'"[options]="options" [label]="'Select_Label' | translate "
-            ></pep-select>
-            <pep-button *ngIf="hostObject" [value]="'Close' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="hostEvents.emit({closeDialog: true});">
-            </pep-button>
-        </div>
+    </div> -->
 
-
-
-</mat-card>
+    <div *ngIf="isLoaded">
+        <addon-install *ngIf="!isInstalled" [hostObject]="hostObject" (installEvent)="onInstallation($event)"></addon-install>
+        <addon-opm-config *ngIf="isInstalled" [hostObject]="hostObject" (installEvent)="onInstallation($event)"></addon-opm-config>
+    </div>
+    
 </div>
-
-

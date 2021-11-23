@@ -1,11 +1,23 @@
 {
 
     "Ok": "Ok",
-    "Select_Label": "Select Label",
-    "Title_Addon": "Hello Addon",
-    "Title_Sub_Addon": "Hello Sub Addon",
-    "Open_Dialog": "Open Dialog",
-    "Dialog_Body": "Dialog from sub addon",
-    "Dialog_Title": "Dialog"
+    "Cancel": "Cancel",
+    "URL": "URL",
+    "User": "User",
+    "Password": "Password",
+    "Select_Destination_Field": "Select Destination Field",
+    "Load_On_Read_only": "Load data on read only transaction?",    
+    "Title_Opm_Detalis": "Details",
+    "Install_Button": "Install",
+    "Uninstall_Button": "Install",
+    "Install_Confirmation_Dialog_Content": "Are you sure you want to install?",
+    "Install_Confirmation_Dialog_Title": "Install",
+    "Install_Description": "This module sends a request to get online data upon entering the transaction.",
+    "Save_Data_Error_Title": "Save Data Failed",
+    "Opm_Details_Description_section_1": "The following web service will be called upon entering and re-entering the transaction.",
+    "Opm_Details_Description_section_2": "The result will be saved in a temporary transaction header field.",
+    "Save_Opm_Details": "Save"
+
+
 
 }
