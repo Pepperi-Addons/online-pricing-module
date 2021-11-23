@@ -46,7 +46,6 @@ export class OpmConfigComponent implements OnInit {
 
   saveOpmData(){
     this.addonService.saveOpmData();
-    // validate opm data and save
   }
   onUninstall($event){
     this.dialogService.openDefaultDialog(new PepDialogData({

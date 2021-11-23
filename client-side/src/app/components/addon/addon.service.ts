@@ -75,13 +75,20 @@ export class AddonService {
 
     async saveOpmData(){
         let res = {};
+        const alertTitle =  await this.translate.get('Save_Data_Dialog_Title').toPromise();
+        let savedDataDialogMessage = ""
         try {
             res = await this.papiClient.addons.api.uuid(this.addonUUID).file('api').func('opm_data').post(undefined, this.opmData)  
-            this.opmData = res as OpmData;                       
+            this.opmData = res as OpmData;
+            savedDataDialogMessage = await this.translate.get("Save_Data_Success_Message").toPromise()
+
         } catch (error) {
-            const alertTitle =  await this.translate.get('Save_Data_Error_Title').toPromise();
-            this.showAlert(alertTitle , error?.message ? error?.message : "error"  )   
+            let errorMsg = await this.translate.get("Save_Data_Error_Message").toPromise() + " \n"; 
+            let errorDetails = error?.message ? error?.message : "error"
+            savedDataDialogMessage = errorMsg + ": " + errorDetails;
         } 
+
+        this.showAlert(alertTitle , savedDataDialogMessage)   
         return res;
     } 
     

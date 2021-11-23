@@ -13,7 +13,9 @@
     "Install_Confirmation_Dialog_Content": "Are you sure you want to install?",
     "Install_Confirmation_Dialog_Title": "Install",
     "Install_Description": "This module sends a request to get online data upon entering the transaction.",
-    "Save_Data_Error_Title": "Save Data Failed",
+    "Save_Data_Error_Message": "Save Data Failed",
+    "Save_Data_Success_Message": "Data Saving Was Successful",
+    "Save_Data_Dialog_Title": "Data Saving Was Successful",
     "Opm_Details_Description_section_1": "The following web service will be called upon entering and re-entering the transaction.",
     "Opm_Details_Description_section_2": "The result will be saved in a temporary transaction header field.",
     "Save_Opm_Details": "Save"
