@@ -1,7 +1,8 @@
 import { PapiClient, InstalledAddon } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
-import { OpmData, OPM_CPI_META_DATA_TABLE_NAME, DUMMY_PASSWORD } from '../shared/entities'
+import { AtdExportResponse, OpmData, OPM_CPI_META_DATA_TABLE_NAME, DUMMY_PASSWORD } from '../shared/entities'
 import * as encryption from '../shared/encryption-service'
+import * as https from "https"
 class OpmService {
 
     papiClient: PapiClient
@@ -51,10 +52,10 @@ class OpmService {
     }
     // return opm data with encrypted password
     async getOpmDataInternal(atdId: any){
-        let opmData = {}; 
+        let opmData: OpmData | undefined; 
         if (atdId) {
             try {
-                opmData = await this.papiClient.addons.data.uuid(this.addonUUID).table(OPM_CPI_META_DATA_TABLE_NAME).key(atdId).get()/*as OpmData*/;                
+                opmData = await this.papiClient.addons.data.uuid(this.addonUUID).table(OPM_CPI_META_DATA_TABLE_NAME).key(atdId).get()as OpmData;                
             } catch (error) {
                 console.log("opm not installed");
             }
@@ -131,6 +132,111 @@ class OpmService {
         }
         return opmData;
     }
+
+    async getOnlineData(query){
+        console.table({"getOnlineData": query});
+        let [AccountExternalID, catalogName, atdId] = [query.account_ex_id, query.catalog_name, query.atd_id]
+        let onlineData:any = {};
+        const opmData = await this.getOpmDataInternal(atdId); 
+        const username = opmData?.User;
+        const password = encryption.decryptPassword(opmData!.Password, this.addonSecretKey);
+
+        const body = {
+            "account": AccountExternalID,
+            "catalog": catalogName,
+            "orderItems": []
+        }    
+        
+        try {
+            onlineData = await this.httpsPost(opmData?.URL, body, username, password)
+            
+        } catch (error) {
+            
+        }
+
+        return onlineData    
+
+    }
+
+    // Import / Expoort
+    async importConfig(body) {
+        try {
+            console.log('importConfig is called, data got from call:', body);
+            if (body && body.Resource == 'transactions') {
+                let objectToimport = body.DataFromExport;
+                // set the atd id of the current atd.
+                objectToimport.AtdID = body.InternalID
+                this.installOpm(objectToimport);
+                return {
+                    success: true
+                }
+            } else {
+                return {
+                    success: false
+                }
+            }
+            
+        }
+        catch (err) {
+            console.log('importConfig Failed with error:', err);
+            return {
+                success: false,
+                errorMessage: 'message' in (err as Error) ? (err as Error).message : 'unknown error occured'
+            }
+        }
+    }
+
+    async exportConfig(query) {
+        let objectToReturn: AtdExportResponse = new AtdExportResponse(true, {});
+        console.log('Export Online Data - query:', query);
+        if (query && query.resource  == 'transactions') {
+            const onlineDataConfig = await this.getOpmDataInternal(query.internal_id);
+            objectToReturn.DataForImport = onlineDataConfig ?? {}
+        }
+        console.table({"exportConfig": objectToReturn});
+        return objectToReturn;
+    }
+    async httpsPost(url, data, username, password) {
+        const dataString = JSON.stringify(data)
+      
+        const options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': dataString.length,
+            'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64')
+
+          },
+          timeout: 5000, // in ms
+        }
+      
+        return new Promise((resolve, reject) => {
+          const req = https.request(url, options, (res: any) => {
+            if (res.statusCode < 200 || res.statusCode > 299) {
+              return reject(new Error(`HTTP status code ${res.statusCode}`))
+            }
+      
+            const body:any = []
+            res.on('data', (chunk) => body.push(chunk))
+            res.on('end', () => {
+              const resString = Buffer.concat(body).toString()
+              resolve(resString)
+            })
+          })
+      
+          req.on('error', (err) => {
+            reject(err)
+          })
+      
+          req.on('timeout', () => {
+            req.destroy()
+            reject(new Error('Request time out'))
+          })
+      
+          req.write(dataString)
+          req.end()
+        })
+      }      
 }
 
 export default OpmService;

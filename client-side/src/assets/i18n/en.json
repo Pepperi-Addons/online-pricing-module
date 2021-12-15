@@ -9,7 +9,7 @@
     "Load_On_Read_only": "Load data on read only transaction?",    
     "Title_Opm_Detalis": "Details",
     "Install_Button": "Install",
-    "Uninstall_Button": "Install",
+    "Uninstall_Button": "Uninstall",
     "Install_Confirmation_Dialog_Content": "Are you sure you want to install?",
     "Install_Confirmation_Dialog_Title": "Install",
     "Install_Description": "This module sends a request to get online data upon entering the transaction.",

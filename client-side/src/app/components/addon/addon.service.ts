@@ -15,7 +15,7 @@ export class AddonService {
     parsedToken: any
     papiBaseURL = ''
     addonUUID;
-    opmData: OpmData;
+    opmData: OpmData | undefined;
     destinationFieldoptions = [];
     get papiClient(): PapiClient {
         return new PapiClient({

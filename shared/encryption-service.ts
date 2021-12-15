@@ -5,7 +5,7 @@ export function encryptPassword(password: string, key: string) {
     return encryptedpassword;
 
 }
-export function dencryptPassword(encryptedString: string, key: string) {
+export function decryptPassword(encryptedString: string, key: string) {
     const cryptr = new Cryptr(key);
     const decryptedpassword = cryptr.decrypt(encryptedString);
     return decryptedpassword;

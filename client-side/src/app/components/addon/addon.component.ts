@@ -1,4 +1,4 @@
-import { OpmData } from './../../../../../shared/entities';
+import { ADDON_UUID, OpmData } from './../../../../../shared/entities';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import {  map } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -50,7 +50,7 @@ export class AddonComponent implements OnInit {
 
     ngOnInit(){
         // known issue, use hardcoded addon uuid
-        this.addonService.addonUUID = "9d047fdc-f151-47b5-b19f-54bcdb35ef3d";
+        this.addonService.addonUUID = ADDON_UUID;
         this.atdUUID = this.hostObject.objectList[0];
         this.addonService.getAtdId(this.atdUUID).then(
             typeID => {
@@ -64,7 +64,7 @@ export class AddonComponent implements OnInit {
             }
         );
     }
-
+    
     private isOpmInstalled(opmData: OpmData){
         let isInstalled = false;
         if (opmData.Key) {
@@ -77,5 +77,4 @@ export class AddonComponent implements OnInit {
         this.isInstalled = !!$event;   
         this.ngOnInit();     
     }
-
 }

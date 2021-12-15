@@ -28,6 +28,20 @@ export async function uninstall(client: Client, request: Request) {
     return res
 };
 
+export async function online_data(client: Client, request: Request) {
+    
+    const service = new OpmService(client)
+    let res = {};
+    if (request.method === 'GET') {
+        res = await service.getOnlineData(request.query); 
+    }
+    else {
+        throw new Error(`Method ${request.method} not supported`);
+    }
+
+    return res
+}
+
 export async function opm_data(client: Client, request: Request) {
     
     const service = new OpmService(client)
@@ -44,7 +58,7 @@ export async function opm_data(client: Client, request: Request) {
         throw new Error(`Method ${request.method} not supported`);
     }
 
-    if (Object.keys(res).length === 0) { // opm is not installed on this atd
+    if (!res || Object.keys(res).length === 0) { // opm is not installed on this atd
         res = {
             success: false,
             errorMessage: 'opm is not installed on this atd',
@@ -69,6 +83,40 @@ export async function opm_destination_field_options(client: Client, request: Req
         throw new Error(`Method ${request.method} not supported`);
     }
 
+    
+    return res
+}
+
+export async function import_online_data_config(client: Client, request:Request) {
+    const service = new OpmService(client)
+    if (request.method == 'POST') {
+        return service.importConfig(request.body);
+    }
+    else if (request.method == 'GET') {
+        throw new Error(`Method ${request.method} not supported`);       
+    }
+}
+
+export async function export_online_data_config(client: Client, request:Request) {
+    const service = new OpmService(client)
+    if (request.method == 'GET') {
+        return service.exportConfig(request.query);
+    }
+    else if (request.method == 'POST') {
+        throw new Error(`Method ${request.method} not supported`);       
+    }
+}
+export async function test(client: Client, request: Request) {
+    
+    let res = {};
+    if (request.method === 'POST') {
+        res = {
+            hello: "world"
+        };       
+    }
+    else {
+        throw new Error(`Method ${request.method} not supported`);
+    }
     
     return res
 }
