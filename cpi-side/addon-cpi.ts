@@ -49,6 +49,7 @@ class OnlineDataCPIManager {
     }
 
     subsribe() {
+        // TODO use reald filter, waiting for Roi
         const filter = {
             // DataObject: {
             //     typeDefinition: {
@@ -57,6 +58,7 @@ class OnlineDataCPIManager {
             // }
         }
         pepperi.events.intercept("PreLoadTransactionScope", filter, async (data, next, main) => {
+            // TODO get order through another approaech, waiting for Roi
             const orderUUID = data.orderUUID;
             this.orderDataObject  = await pepperi.DataObject.Get("transactions", orderUUID)
             if (this.opmConfig) {
