@@ -74,7 +74,8 @@ class OnlineDataCPIManager {
     async handleOrderOnlineData(){
         debugger
         const isOrderEditable = await this.isOrderEditable();
-        // handle read only atds only if the user choosed to do that.     
+        // handle read only atds only if the user choosed to do that.
+        // TODO need to talk with Eyal about read only order     
         if (isOrderEditable || !isOrderEditable && this.opmConfig?.EnableOnReadOnlyAtd) {
             const onlineData = await this.getOnlineData();
             await this.setOnlineData(onlineData);  
