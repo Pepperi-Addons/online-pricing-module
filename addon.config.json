@@ -18,7 +18,7 @@
   "PublishConfig": {
     "ClientStack": "ng10",
     "Dependencies": {
-      "cpi_node": "0.2.0"
+      "cpi_node": "0.3.2"
     },
     "CPISide": [
       "addon-cpi.ts"

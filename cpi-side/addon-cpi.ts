@@ -95,10 +95,8 @@ class OnlineDataCPIManager {
     }
     async isOrderEditable(){
         // return if order is editable
-        const inTransition = await this.orderDataObject?.inTransition() 
         const availableTransitions = await this.orderDataObject?.availableTransitions()
-        const isOrderEditable = !inTransition && availableTransitions && availableTransitions?.length > 0 
-        console.log('inTransition :>> ', inTransition);
+        const isOrderEditable = availableTransitions && availableTransitions?.length > 0 
         console.log('availableTransitions :>> ', availableTransitions);
         console.log('isOrderEditable :>> ', isOrderEditable);
         return isOrderEditable;
