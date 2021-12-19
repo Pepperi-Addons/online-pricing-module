@@ -51,7 +51,7 @@ class OpmService {
         return this.setDummyPasswordIfNeeded(opmData)
     }
     // return opm data with encrypted password
-    async getOpmDataInternal(atdId: any){
+async getOpmDataInternal(atdId: any){
         let opmData: OpmData | undefined; 
         if (atdId) {
             try {
@@ -134,15 +134,19 @@ class OpmService {
     }
 
     async getOnlineData(query){
+        let [accountExternalID, catalogName, atdId] = [query.account_ex_id, query.catalog_name, query.atd_id]
+        const isAccountAutorizedToUser = await this.isAccountAutorizedToUser(accountExternalID)
+        if (!isAccountAutorizedToUser) {
+            throw new Error(`user is not authorized to get data for account ${accountExternalID}`); // should throw 404 error
+        }
         console.table({"getOnlineData": query});
-        let [AccountExternalID, catalogName, atdId] = [query.account_ex_id, query.catalog_name, query.atd_id]
         let onlineData:any = {};
         const opmData = await this.getOpmDataInternal(atdId); 
         const username = opmData?.User;
         const password = encryption.decryptPassword(opmData!.Password, this.addonSecretKey);
 
         const body = {
-            "account": AccountExternalID,
+            "account": accountExternalID,
             "catalog": catalogName,
             "orderItems": []
         }    
@@ -158,6 +162,13 @@ class OpmService {
 
     }
 
+    async isAccountAutorizedToUser(accountExternalID){
+        let res = []
+        // res = await this.papiClient.get(`/accounts`);
+        res = await this.papiClient.get(`/accounts?where=ExternalID='${accountExternalID}'`);
+        return res.length != 0;
+    }
+
     // Import / Expoort
     async importConfig(body) {
         try {
@@ -165,7 +176,7 @@ class OpmService {
             if (body && body.Resource == 'transactions') {
                 let objectToimport = body.DataFromExport;
                 // set the atd id of the current atd.
-                objectToimport.AtdID = body.InternalID
+                objectToimport.AtdID = Number(body.InternalID)
                 this.installOpm(objectToimport);
                 return {
                     success: true
@@ -190,12 +201,16 @@ class OpmService {
         let objectToReturn: AtdExportResponse = new AtdExportResponse(true, {});
         console.log('Export Online Data - query:', query);
         if (query && query.resource  == 'transactions') {
-            const onlineDataConfig = await this.getOpmDataInternal(query.internal_id);
+            const onlineDataConfig = await this.getOpmDataInternal(query.internal_id) as any;
+            if (onlineDataConfig?.Password) {
+                delete onlineDataConfig.Password // remvoe password             
+            }
             objectToReturn.DataForImport = onlineDataConfig ?? {}
         }
         console.table({"exportConfig": objectToReturn});
         return objectToReturn;
     }
+
     async httpsPost(url, data, username, password) {
         const dataString = JSON.stringify(data)
       

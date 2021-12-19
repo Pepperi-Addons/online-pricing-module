@@ -51,16 +51,18 @@ class OnlineDataCPIManager {
     subsribe() {
         // TODO use reald filter, waiting for Roi
         const filter = {
-            // DataObject: {
-            //     typeDefinition: {
-            //         internalID: this.opmConfig?.AtdID//Number(this.config.Key)
-            //     }
-            // }
+            DataObject: {
+                typeDefinition: {
+                    internalID: this.opmConfig?.AtdID
+                }
+            }
         }
+        console.table(filter);
         pepperi.events.intercept("PreLoadTransactionScope", filter, async (data, next, main) => {
             // TODO get order through another approaech, waiting for Roi
-            const orderUUID = data.orderUUID;
-            this.orderDataObject  = await pepperi.DataObject.Get("transactions", orderUUID)
+            // const orderUUID = data.orderUUID;
+            // this.orderDataObject  = await pepperi.DataObject.Get("transactions", orderUUID)
+            this.orderDataObject  = data.DataObject as Transaction
             if (this.opmConfig) {
                 console.log("About to load online data for config:");
                 console.table({ "PreLoadTransactionScope" : this.opmConfig });
@@ -75,7 +77,6 @@ class OnlineDataCPIManager {
         debugger
         const isOrderEditable = await this.isOrderEditable();
         // handle read only atds only if the user choosed to do that.
-        // TODO need to talk with Eyal about read only order     
         if (isOrderEditable || !isOrderEditable && this.opmConfig?.EnableOnReadOnlyAtd) {
             const onlineData = await this.getOnlineData();
             await this.setOnlineData(onlineData);  
