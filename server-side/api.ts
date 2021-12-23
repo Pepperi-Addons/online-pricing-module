@@ -29,7 +29,6 @@ export async function uninstall(client: Client, request: Request) {
 };
 
 export async function online_data(client: Client, request: Request) {
-    
     const service = new OpmService(client)
     let res = {};
     if (request.method === 'GET') {

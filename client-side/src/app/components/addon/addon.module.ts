@@ -58,7 +58,8 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
-                useFactory: createTranslateLoader,
+                useFactory: (http: HttpClient, fileService: PepFileService, addonService: PepAddonService) =>
+                    PepAddonService.createDefaultMultiTranslateLoader(http, fileService, addonService, "9d047fdc-f151-47b5-b19f-54bcdb35ef3d"),
                 deps: [HttpClient, PepFileService, PepAddonService]
             }, isolate: false
         }),
@@ -85,19 +86,10 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
 })
 export class AddonModule {
     constructor(
-          translate: TranslateService
+          translate: TranslateService,
+          private pepAddonService: PepAddonService
       ) {
-
-        let userLang = 'en';
-        translate.setDefaultLang(userLang);
-        userLang = translate.getBrowserLang().split('-')[0]; // use navigator lang if available
-
-        if (location.href.indexOf('userLang=en') > -1) {
-            userLang = 'en';
-        }
-        // the lang to use, if the lang isn't available, it will use the current loader to get them
-        translate.use(userLang).subscribe((res: any) => {
-            // In here you can put the code you want. At this point the lang will be loaded
-        });
+        this.pepAddonService.setDefaultTranslateLang(translate);
+       
     }
 }
