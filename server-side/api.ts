@@ -41,8 +41,7 @@ export async function online_data(client: Client, request: Request) {
     return res
 }
 
-export async function opm_data(client: Client, request: Request) {
-    
+export async function opm_data(client: Client, request: Request) {    
     const service = new OpmService(client)
     let res = {};
     if (request.method === 'GET') {
@@ -67,8 +66,7 @@ export async function opm_data(client: Client, request: Request) {
     return res
 }
 
-export async function opm_destination_field_options(client: Client, request: Request) {
-    
+export async function opm_destination_field_options(client: Client, request: Request) {    
     const service = new OpmService(client)
     let res = {};
     if (request.method === 'GET') {
@@ -105,6 +103,7 @@ export async function export_online_data_config(client: Client, request:Request)
         throw new Error(`Method ${request.method} not supported`);       
     }
 }
+
 export async function test(client: Client, request: Request) {
     
     let res = {};

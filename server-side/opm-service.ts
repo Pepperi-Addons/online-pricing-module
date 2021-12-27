@@ -4,7 +4,6 @@ import { AtdExportResponse, OpmData, OPM_CPI_META_DATA_TABLE_NAME, DUMMY_PASSWOR
 import * as encryption from '../shared/encryption-service'
 import * as https from "https"
 class OpmService {
-
     papiClient: PapiClient
     addonUUID: string;
     addonSecretKey: string
@@ -20,6 +19,7 @@ class OpmService {
         this.addonUUID = client.AddonUUID;
 
     }
+
     async installOpm(opmData: OpmData){
         let res = {};
         if (opmData.AtdID) {
@@ -32,6 +32,7 @@ class OpmService {
         }
 
     }
+
     async uninstallOpm(opmData: OpmData){
         let res = {};
         if (opmData.AtdID) {
@@ -44,14 +45,16 @@ class OpmService {
             throw new Error(`AtdID is required`);
         }
     } 
+
     // return opm data obj with dummy passwaord
     async getOpmData(query: any){
         const atdId = query.atd_id
         let opmData = await this.getOpmDataInternal(atdId);        
         return this.setDummyPasswordIfNeeded(opmData)
     }
+
     // return opm data with encrypted password
-async getOpmDataInternal(atdId: any){
+    async getOpmDataInternal(atdId: any){
         let opmData: OpmData | undefined; 
         if (atdId) {
             try {
@@ -62,6 +65,7 @@ async getOpmDataInternal(atdId: any){
         }
         return opmData;
     }
+
     async upsertOpmData(opmData: OpmData){
         let res = {};
         if (this.validateOpmData(opmData)) {
@@ -71,7 +75,8 @@ async getOpmDataInternal(atdId: any){
         }
         return this.setDummyPasswordIfNeeded(res);
     }
-    // in case the object have a dummy passwork, we need to take care and dont save it.
+
+    // in case the object have a dummy password, we need to take care and don't save it.
     // so when we have a dummy password, we remove it from the object, and the upsert to ADAL will not change the current password
     async handlePassword(newOpmData: any){
         const pswd: string = newOpmData.Password;
@@ -107,6 +112,8 @@ async getOpmDataInternal(atdId: any){
         }
     }
 
+    // return optianal TSAs that can be stored the online data.
+    // only temporary string TSAs will return.
     async getDestinationFieldOptions(query: any){
         const atdId = query.atd_id
         let opmDestinationOptions: any[] = [] 
@@ -164,7 +171,6 @@ async getOpmDataInternal(atdId: any){
 
     async isAccountAutorizedToUser(accountExternalID){
         let res = []
-        // res = await this.papiClient.get(`/accounts`);
         res = await this.papiClient.get(`/accounts?where=ExternalID='${accountExternalID}'`);
         return res.length != 0;
     }
@@ -211,6 +217,7 @@ async getOpmDataInternal(atdId: any){
         return objectToReturn;
     }
 
+    // https POST request [using https module]
     async httpsPost(url, data, username, password) {
         const dataString = JSON.stringify(data)
       
@@ -251,7 +258,7 @@ async getOpmDataInternal(atdId: any){
           req.write(dataString)
           req.end()
         })
-      }      
+    }      
 }
 
 export default OpmService;

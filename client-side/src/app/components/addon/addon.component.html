@@ -1,10 +1,4 @@
 <div class="addon-main">
-    
-    <!-- <div #loadingSpinner pepRtlClass [ngStyle]="{ visibility: 'visible' }" id="loadingSpinnerModal">
-        <div id="loadingSpinner">
-            <div class="pep-loading-spinner" *ngFor="let number of [0, 1, 2, 3, 4]" [ngStyle]="{ 'background-color': customizationService?.getLoadingSpinnerColor() }"></div>
-        </div>
-    </div> -->
 
     <div *ngIf="isLoaded">
         <addon-install *ngIf="!isInstalled" [hostObject]="hostObject" (installEvent)="onInstallation($event)"></addon-install>

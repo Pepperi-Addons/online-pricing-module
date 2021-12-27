@@ -12,7 +12,7 @@ export async function load(configuration: any) {
         table: OPM_CPI_META_DATA_TABLE_NAME,
         addon: config.AddonUUID
     })).objects as OpmData[];
-debugger
+
     // intercept for each atd that installed the addon
     opmConfigs.forEach(config => {
         const onlineDataManager = new OnlineDataCPIManager(config)
@@ -27,15 +27,7 @@ class OnlineDataCPIManager {
     papiBaseURL = ''
     opmConfig: OpmData | undefined
 
- 
-    async getPapiClient(): Promise<PapiClient> {
-        return new PapiClient({
-            baseURL: this.papiBaseURL,
-            token: await pepperi.auth.getAccessToken(),
-            addonUUID: ADDON_UUID,
-            suppressLogging:true
-        })
-    }
+    
     constructor(private atdConfig: OpmData){
         this.opmConfig = atdConfig;
         pepperi.auth.getAccessToken().then( accessToken => {
@@ -49,7 +41,7 @@ class OnlineDataCPIManager {
     }
 
     subsribe() {
-        // TODO use reald filter, waiting for Roi
+        // intercept only atd that was configured the online data addon.
         const filter = {
             DataObject: {
                 typeDefinition: {
@@ -59,9 +51,6 @@ class OnlineDataCPIManager {
         }
         console.table(filter);
         pepperi.events.intercept("PreLoadTransactionScope", filter, async (data, next, main) => {
-            // TODO get order through another approaech, waiting for Roi
-            // const orderUUID = data.orderUUID;
-            // this.orderDataObject  = await pepperi.DataObject.Get("transactions", orderUUID)
             this.orderDataObject  = data.DataObject as Transaction
             if (this.opmConfig) {
                 console.log("About to load online data for config:");
@@ -73,6 +62,16 @@ class OnlineDataCPIManager {
             await next(main);
         })
     }
+
+    async getPapiClient(): Promise<PapiClient> {
+        return new PapiClient({
+            baseURL: this.papiBaseURL,
+            token: await pepperi.auth.getAccessToken(),
+            addonUUID: ADDON_UUID,
+            suppressLogging:true
+        })
+    }
+
     async handleOrderOnlineData(){
         debugger
         const isOrderEditable = await this.isOrderEditable();
@@ -82,6 +81,7 @@ class OnlineDataCPIManager {
             await this.setOnlineData(onlineData);  
         }
     }
+
     async getOnlineData(){
         // call addon api to get online data        
         const acountExID = await this.orderDataObject?.getFieldValue("AccountExternalID")
@@ -94,14 +94,16 @@ class OnlineDataCPIManager {
         )   
         return onlineData    
     }
+
     async isOrderEditable(){
-        // return if order is editable
+        // return true if order is editable
         const availableTransitions = await this.orderDataObject?.availableTransitions()
         const isOrderEditable = availableTransitions && availableTransitions?.length > 0 
         console.log('availableTransitions :>> ', availableTransitions);
         console.log('isOrderEditable :>> ', isOrderEditable);
         return isOrderEditable;
     }
+
     async setOnlineData(onlineData){
         if (this.opmConfig!.DestinationField != "") {
             console.log(`about to setOnlineData to DestinationField: ${this.opmConfig!.DestinationField}`);
