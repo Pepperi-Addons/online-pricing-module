@@ -1,7 +1,3 @@
-
-// Examples how to import all @pepperi-addons/ngx-lib
-// Recommended to import only needed components for optimization
-
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -24,8 +20,9 @@ import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepListModule } from '@pepperi-addons/ngx-lib/list';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
-import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
+import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
+import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 
 import {
     PepIconModule,
@@ -62,7 +59,8 @@ import {
     pepIconViewCardSm,
     pepIconViewTable,
     pepIconViewMatrix,
-    pepIconViewLine
+    pepIconViewLine,
+    pepIconSystemDoc
 } from '@pepperi-addons/ngx-lib/icon';
 const pepIcons = [
     pepIconSystemBolt,
@@ -97,7 +95,8 @@ const pepIcons = [
     pepIconViewCardSm,
     pepIconViewTable,
     pepIconViewMatrix,
-    pepIconViewLine
+    pepIconViewLine,
+    pepIconSystemDoc
 ];
 
 const pepperiComponentsModules = [
@@ -120,41 +119,12 @@ const pepperiComponentsModules = [
     PepTextboxModule,
     PepIconModule,
     PepMenuModule,
+    PepTopBarModule,
     PepButtonModule,
-    PepTopBarModule
+    PepPageLayoutModule
 ];
 
-import { TranslateModule, TranslateLoader, TranslateService, TranslateStore } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-// export function createTranslateLoader(http: HttpClient) {
-//    return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
-// }
-
-export function createTranslateLoader(http: HttpClient, fileService: PepFileService, addonService: PepAddonService) {
-    const translationsPath: string = fileService.getAssetsTranslationsPath();
-    const translationsSuffix: string = fileService.getAssetsTranslationsSuffix();
-    const addonStaticFolder = addonService.getAddonStaticFolder();
-
-    return new MultiTranslateHttpLoader(http, [
-        {
-            prefix:
-                addonStaticFolder.length > 0
-                    ? addonStaticFolder + translationsPath
-                    : translationsPath,
-            suffix: translationsSuffix,
-        },
-        {
-            prefix:
-                addonStaticFolder.length > 0
-                    ? addonStaticFolder + "assets/i18n/"
-                    : "/assets/i18n/",
-            suffix: ".json",
-        },
-    ]);
-}
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [],
@@ -162,39 +132,27 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
         CommonModule,
         PepNgxLibModule,
         pepperiComponentsModules,
-        // TranslateModule.forChild({
-        //     loader: {
-        //         provide: TranslateLoader,
-        //         useFactory: createTranslateLoader,
-        //         deps: [HttpClient, PepFileService, PepAddonService]
-        //     }, isolate: false
-        // })
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: PepAddonService.createDefaultMultiTranslateLoader,
+                deps: [HttpClient, PepFileService, PepAddonService]
+            }
+        })
     ],
     exports: [
         PepNgxLibModule,
         pepperiComponentsModules
-    ],
-    providers: [TranslateStore]
+    ]
 })
 export class PepUIModule {
 
     constructor(
-        //   translate: TranslateService,
-          private pepperiIconRegistry: PepIconRegistry
-      ) {
+        translate: TranslateService,
+        private pepperiIconRegistry: PepIconRegistry,
+        private pepAddonService: PepAddonService
+    ) {
         this.pepperiIconRegistry.registerIcons(pepIcons);
-
-        // let userLang = 'en';
-        // translate.setDefaultLang(userLang);
-        // userLang = translate.getBrowserLang().split('-')[0]; // use navigator lang if available
-
-        // if (location.href.indexOf('userLang=en') > -1) {
-        //     userLang = 'en';
-        // }
-
-        // // the lang to use, if the lang isn't available, it will use the current loader to get them
-        // translate.use(userLang).subscribe((res: any) => {
-        //     // In here you can put the code you want. At this point the lang will be loaded
-        // });
-    }
+        this.pepAddonService.setDefaultTranslateLang(translate);
+    }  
 }

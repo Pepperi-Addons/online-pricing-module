@@ -12,17 +12,6 @@ export class EmptyRouteComponent {}
 
 const routes: Routes = [
     {
-        path: `settings/:addon_uuid`,
-        children: [
-            {
-                path: ':editor',
-                component: AddonComponent
-                // TODO: solve routing
-                // loadChildren: () => import('./components/addon/index').then(m => m.AddonModule)
-            }
-        ]
-    },
-    {
         path: '**',
         component: EmptyRouteComponent
     }

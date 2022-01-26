@@ -18,7 +18,7 @@ module.exports = (config, options, env) => {
     else {
         const mfConfig = {
             output: {
-              uniqueName: "addon",
+              uniqueName: "opm_config",
               publicPath: "auto"
             },
             optimization: {
@@ -28,8 +28,8 @@ module.exports = (config, options, env) => {
             plugins: [
               new ModuleFederationPlugin({
                 // remotes: {},
-                name: "addon",
-                filename: "addon.js",
+                name: "opm_config",
+                filename: "opm_config.js",
                 exposes: {
                   './AddonComponent': './src/app/components/addon/index.ts',
                   './AddonModule': './src/app/components/addon/index.ts'
@@ -38,7 +38,12 @@ module.exports = (config, options, env) => {
                 shared: {
                   // ...deps,
                   "@angular/core": { eager:true,  singleton: true,   strictVersion: false  },
-                  "@angular/common": { eager:true,  singleton: true,  strictVersion: false   }
+                  "@angular/common": { eager:true,  singleton: true,  strictVersion: false   },
+                  "@angular/common/http": { eager:true,  singleton: true,  strictVersion: false   },
+                  "@angular/material": { eager:true,  singleton: true,  strictVersion: false   },
+                  "rxjs": { eager: true, singleton: true, strictVersion: false },
+                  "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false },
+                  "@angular/router": { eager: true, singleton: true,  strictVersion: false }
                 }
               })
             ],

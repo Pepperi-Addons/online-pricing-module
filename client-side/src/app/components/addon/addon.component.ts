@@ -1,12 +1,13 @@
+import { ADDON_UUID, OpmData } from './../../../../../shared/entities';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import {  map } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
-import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
-import { AddonService, PepperiTableComponent } from './index';
+import { PepLayoutService, PepScreenSizeType, PepLoaderService, PepCustomizationService } from '@pepperi-addons/ngx-lib';
+import { AddonService} from './index';
 import { Observable } from 'rxjs';
 import { InstalledAddon } from '@pepperi-addons/papi-sdk';
-
+import { event } from 'jquery';
 
 @Component({
   selector: 'addon-module',
@@ -17,44 +18,63 @@ import { InstalledAddon } from '@pepperi-addons/papi-sdk';
 export class AddonComponent implements OnInit {
 
     screenSize: PepScreenSizeType;
-    options: {key:string, value:string}[] = [];
-    dataSource$: Observable<any[]>
-    displayedColumns = ['Name', 'Description'];
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-    @ViewChild(PepperiTableComponent) table: PepperiTableComponent;
-
-
+    showLoading = false;
+    // is addon installed on this ATD
+    isInstalled: boolean = false;
+    isLoaded: boolean = false;
+    
+    atdUUID: string;
+    atdID: number;
     constructor(
         public addonService: AddonService,
         public layoutService: PepLayoutService,
         public dialog: PepDialogService,
-        public translate: TranslateService
+        public translate: TranslateService,
+        public loaderService: PepLoaderService,
+        public customizationService: PepCustomizationService,
+
+
     ) {
 
         this.layoutService.onResize$.subscribe(size => {
             this.screenSize = size;
         });
+        this.loaderService.onChanged$
+        .subscribe((show) => {
+            this.showLoading = show;
+        });
 
     }
 
     ngOnInit(){
-       this.dataSource$ = this.addonService.pepGet(`/addons/installed_addons`)
-       .pipe(
-           map((addons: InstalledAddon[]) =>
-             addons.filter(addon => addon?.Addon).map(addon => addon?.Addon))
+        // known issue, use hardcoded addon uuid
+        this.addonService.addonUUID = ADDON_UUID;
+        this.atdUUID = this.hostObject.objectList[0];
+        this.addonService.getAtdId(this.atdUUID).then(
+            typeID => {
+                this.atdID = typeID;
+                this.addonService.getOpmData(this.atdID).then(
+                    data => {
+                        this.addonService.opmData = data
+                        this.isInstalled = this.isOpmInstalled(this.addonService.opmData)
+                        this.isLoaded = true;
+                    });
+            }
         );
     }
-
-    openDialog(){
-        const content = this.translate.instant('Dialog_Body');
-        const title = this.translate.instant('Dialog_Title');
-        const dataMsg = new PepDialogData({title, actionsType: "close", content});
-        this.dialog.openDefaultDialog(dataMsg);
+    
+    private isOpmInstalled(opmData: OpmData){
+        let isInstalled = false;
+        if (opmData.Key) {
+            isInstalled = true
+        }
+        return isInstalled;
     }
 
-
-
-
-
+    onInstallation($event){
+        this.isInstalled = !!$event;   
+        this.ngOnInit();     
+    }
 }

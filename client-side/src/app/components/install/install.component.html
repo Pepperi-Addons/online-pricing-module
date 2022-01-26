@@ -1,0 +1,21 @@
+<div>
+    <div class="content" style="margin-top: 20px;">
+        <p class="body-md">
+            {{'Install_Description' | translate}}            
+        </p>    
+    </div>
+    <div class="install-btn">
+        <pep-button 
+            value = "{{'Install_Button' | translate}}"
+            styleType="strong"
+            styleStateType="system"
+            sizeType="lg"
+            classNames=""
+            [disabled]="false"
+            iconPosition="end"
+            [visible]="true"
+            (buttonClick)="onInstall($event)"
+            ></pep-button>        
+    </div>
+   
+</div>

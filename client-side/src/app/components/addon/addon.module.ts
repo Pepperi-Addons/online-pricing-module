@@ -1,8 +1,11 @@
+import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
+import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
+import { OpmConfigComponent } from './../opm-config/opm-config.component';
+import { InstallComponent } from './../install/install.component';
 import { MatCardModule } from '@angular/material/card';
 import { PepListModule } from '@pepperi-addons/ngx-lib/list';
 import { AddonService } from './addon.service';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
-// import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -12,7 +15,6 @@ import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepHttpService, PepFileService, PepNgxLibModule, PepAddonService, PepCustomizationService } from '@pepperi-addons/ngx-lib';
 import { AddonComponent } from './index';
-import {PepperiTableComponent} from './pepperi-table.component'
 import { MatDialogModule } from '@angular/material/dialog';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 
@@ -42,18 +44,22 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
 @NgModule({
     declarations: [
         AddonComponent,
-        PepperiTableComponent
+        InstallComponent,
+        OpmConfigComponent
     ],
     imports: [
         CommonModule,
         HttpClientModule,
         MatDialogModule,
         MatCardModule,
+        PepTextboxModule,
+        PepCheckboxModule,
         //// When not using module as sub-addon please remark this for not loading twice resources
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
-                useFactory: createTranslateLoader,
+                useFactory: (http: HttpClient, fileService: PepFileService, addonService: PepAddonService) =>
+                    PepAddonService.createDefaultMultiTranslateLoader(http, fileService, addonService, "9d047fdc-f151-47b5-b19f-54bcdb35ef3d"),
                 deps: [HttpClient, PepFileService, PepAddonService]
             }, isolate: false
         }),
@@ -80,19 +86,10 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
 })
 export class AddonModule {
     constructor(
-          translate: TranslateService
+          translate: TranslateService,
+          private pepAddonService: PepAddonService
       ) {
-
-        let userLang = 'en';
-        translate.setDefaultLang(userLang);
-        userLang = translate.getBrowserLang().split('-')[0]; // use navigator lang if available
-
-        if (location.href.indexOf('userLang=en') > -1) {
-            userLang = 'en';
-        }
-        // the lang to use, if the lang isn't available, it will use the current loader to get them
-        translate.use(userLang).subscribe((res: any) => {
-            // In here you can put the code you want. At this point the lang will be loaded
-        });
+        this.pepAddonService.setDefaultTranslateLang(translate);
+       
     }
 }

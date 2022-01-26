@@ -1,8 +1,3 @@
-
-
-// Examples how to import all @angular/material
-// Recommended to import only needed components for optimization
-
 import { A11yModule } from '@angular/cdk/a11y';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -47,7 +42,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
-import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 const matComponentsModules = [
     MatAutocompleteModule,
@@ -111,8 +106,7 @@ const matComponentsModules = [
         ScrollingModule,
         BidiModule,
         matComponentsModules
-    ],
-    providers: [{provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'never'}}],
+    ]
 })
 export class MaterialModule {}
 
