@@ -63,15 +63,6 @@ class OnlineDataCPIManager {
         })
     }
 
-    async getPapiClient(): Promise<PapiClient> {
-        return new PapiClient({
-            baseURL: this.papiBaseURL,
-            token: await pepperi.auth.getAccessToken(),
-            addonUUID: ADDON_UUID,
-            suppressLogging:true
-        })
-    }
-
     async handleOrderOnlineData(){
         debugger
         const isOrderEditable = await this.isOrderEditable();
@@ -88,8 +79,7 @@ class OnlineDataCPIManager {
         const catalogName = await this.orderDataObject?.catalog.getFieldValue("ID")
         const atdID = await this.orderDataObject?.getFieldValue("ActivityTypeDefinitionWrntyID")
         console.log(`getOnlineData - acountExID: ${acountExID}, catalogName: ${catalogName}, atdID: ${atdID}`);
-        const papiClient = await this.getPapiClient();
-        const onlineData = await papiClient.addons.api.uuid(ADDON_UUID).file('api').func('online_data').get(
+        const onlineData = await pepperi.papiClient.addons.api.uuid(ADDON_UUID).file('api').func('online_data').get(
             {atd_id: atdID, catalog_name: catalogName, account_ex_id: acountExID}
         )   
         return onlineData    
@@ -103,7 +93,7 @@ class OnlineDataCPIManager {
         console.log('isOrderEditable :>> ', isOrderEditable);
         return isOrderEditable;
     }
-
+    
     async setOnlineData(onlineData){
         if (this.opmConfig!.DestinationField != "") {
             console.log(`about to setOnlineData to DestinationField: ${this.opmConfig!.DestinationField}`);
@@ -111,6 +101,5 @@ class OnlineDataCPIManager {
         } else {
             console.log("DestinationField is missing");
         }
-
     }
 }
